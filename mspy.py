@@ -192,11 +192,26 @@ class particles:
 		self.nbods = len(self.x)
 
 class gen_ms():
+	"""Class to run SCMS on generic xy data
+	
+	"""
 	def init(self, x, y):
+		"""Initialize the object - just takes x and y data
+		
+		"""
 		self.x = x
 		self.y = y
 
 	def do_meanshift(self, kernel='uniform', spatial='kd_tree', scale=.5, n_points = 100, do_modes = False, boundmask=False, mask=False):
+		"""Run meanshift -- essentially a wrapper around ms.MeanShift.manifolds()
+		scale is 1/smoothing length
+		n_points is the numbe of randomly selected data points to start from
+		do_modes = True will run regular meanshift as well to find the local maxima
+
+		returns the data object with .rpx and .rpy, which are the final ridgepoint locations, as well as 
+		leigval, seigval, leigvec and seigvec which are the corresponding eigenvalues and vectors
+		
+		"""
 		if boundmask:
 			#subsample sim to just unbound xy
 			self.xydata = np.transpose(np.vstack((self.x[self.tub>0],self.y[self.tub>0])))
