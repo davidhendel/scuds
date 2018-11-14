@@ -484,7 +484,7 @@ class sim_ms(particles):
 			satmask = np.sqrt((self.rpx-satx)**2+(self.rpy-saty)**2)>5
 		else: satmask = True
 		cenmask = np.sqrt((self.rpx)**2+(self.rpy)**2)>15.
-		self.mask_morph = np.mean(self.mu_ratio[cenmask&satmask])
+		self.mask_morph = np.median(self.mu_ratio[cenmask&satmask])
 
 		#warning - not size-adaptive#
 		#grid_morph_n       = np.histogram2d(self.xydata[self.startpoints,0],self.xydata[self.startpoints,1],
