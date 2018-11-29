@@ -34,10 +34,10 @@ a.plot_xy()
 #initialize an instance of the sim_ms class
 data = mspy.sim_ms()
 #load simulation snapshot - basically just read_snap()
-data.init('/Users/hendel/Desktop/clouds_archive/rc25/M2.5e+07/L0.20/',60)
-#data.init('/Users/hendel/Desktop/clouds_archive/rc25/M2.5e+07/L0.90/',60)
+#data.init('/Users/hendel/Desktop/clouds_archive/rc25/M2.5e+07/L0.20/',60)
+data.init('/Users/hendel/Desktop/clouds_archive/rc25/M2.5e+07/L0.90/',60)
 #run the SCMS - scale is 1/smoothing length, do_modes will do regular mean shift as well
-data.do_meanshift(scale=0.5, n_points=1000, do_modes=False)
+data.do_meanshift(scale=0.5, n_points=5000, do_modes=False)
 #compute the morphology at each point and a global (mean) morphology
 data.get_stats_orth()
 
@@ -77,8 +77,8 @@ plt.xlim([-50,50])
 plt.ylim([-50,50])
 
 #save data
-np.savez('mspy_shell_example.npz', x=data.x, y=data.y, rpx = data.rpx, rpy = data.rpy, mu_ratio = data.mu_ratio,
-	leigvec = data.leigvec)
+np.savez('mspy_stream_example.npz', x=data.x, y=data.y, rpx = data.rpx, rpy = data.rpy, mu_ratio = data.mu_ratio,
+	leigvec = data.leigvec, startx = data.xydata[data.startpoints][:,0], starty = data.xydata[data.startpoints][:,1])
 
 #load data
 d = np.load('mspy_shell_example.npz')
