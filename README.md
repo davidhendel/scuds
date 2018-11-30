@@ -1,4 +1,4 @@
-Identify halo substructure (or other linear features) using Subspace--Constrained Mean Shift
+Identify and characterize halo substructure (or other linear features) using Subspace--Constrained Mean Shift. See https://ui.adsabs.harvard.edu/#abs/2018arXiv181110613H/abstract for a complete description and examples.
 
 Requires Python 2.x
 
