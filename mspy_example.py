@@ -5,8 +5,8 @@ import mspy
 #Generic usage
 
 #create some xy data
-rs = np.random.normal(loc=5, size=1000)
-phis = np.random.uniform(size=1000)*2*np.pi-np.pi
+rs = np.random.normal(loc=5, size=5000)
+phis = np.random.uniform(size=5000)*2*np.pi-np.pi
 xs = rs*np.cos(phis)
 ys = rs*np.sin(phis)
 
@@ -16,8 +16,14 @@ a = mspy.gen_ms()
 #initialize data
 a.init(x=xs,y=ys)
 
+plt.figure()
+plt.subplot(111,aspect='equal')
+plt.scatter(a.x,a.y,s=1,alpha=0.2,c='k')
+
 #run meanshift
-a.do_meanshift()
+a.do_meanshift(n_points=1000)
+
+plt.scatter(a.rpx,a.rpy,s=1,alpha=0.5,c='r')
 
 #compute asymmetry
 a.get_stats_orth()
