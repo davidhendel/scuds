@@ -367,7 +367,8 @@ class sim_ms(particles):
 	def do_meanshift(self, kernel='uniform', spatial='kd_tree', scale=.5, n_points = 100, do_modes = False, boundmask=True, mask=False):
 		if boundmask:
 			#subsample sim to just unbound xy
-			self.xydata = np.transpose(np.vstack((self.x[self.tub>0],self.y[self.tub>0])))
+			try: self.xydata = np.transpose(np.vstack((self.x[self.tub>0],self.y[self.tub>0])))
+			except: self.xydata = np.transpose(np.vstack((self.x,self.y)))
 		else:
 			self.xydata = np.transpose(np.vstack((self.x,self.y)))
 
@@ -484,7 +485,8 @@ class sim_ms(particles):
 			satmask = np.sqrt((self.rpx-satx)**2+(self.rpy-saty)**2)>5
 		else: satmask = True
 		cenmask = np.sqrt((self.rpx)**2+(self.rpy)**2)>15.
-		self.mask_morph = np.median(self.mu_ratio[cenmask&satmask])
+		self.mask = cenmask&satmask
+		self.mask_morph = np.median(self.mu_ratio[self.mask])
 
 		#warning - not size-adaptive#
 		#grid_morph_n       = np.histogram2d(self.xydata[self.startpoints,0],self.xydata[self.startpoints,1],
