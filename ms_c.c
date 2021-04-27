@@ -76,7 +76,7 @@ static PyObject * MeanShift_new_py(PyTypeObject * type, PyObject * args, PyObjec
 static void MeanShift_dealloc_py(MeanShift * self)
 {
  MeanShift_dealloc(self);
- self->ob_type->tp_free((PyObject*)self);
+ Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 
