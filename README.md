@@ -2,6 +2,23 @@ Identify and characterize halo substructure (or other linear features) using Sub
 
 Requires Python 2.x
 
-Depends on the 'helit/ms' subpackage https://github.com/thaines/helit
+## Helit
 
-You will need to replace the ms_c.c file with the one in this repository; this allows output of the eigendirections but restricts usage to 2d (for now).
+The Subspace--Constrained Mean Shift computation is done by the 'helit/ms' subpackage of https://github.com/thaines/helit. 
+
+To use this package you will need to replace the ms_c.c file in the helit/ms directory with the one in this repository. This allows output of the principle curve eigendirections but restricts usage to 2d (for now).
+
+If you use this package please also cite helit and the work it was developed for, 
+
+  @MISC{helit,
+    author = {T. S. F. Haines},
+    title = {\url{https://github.com/thaines/helit}},
+    year = {2010--},
+  }
+
+  @INPROCEEDINGS{HainesTOG2016,
+    author       = {Haines, Tom S.F. and Mac Aodha, Oisin and Brostow, Gabriel J.},
+    title        = {{My Text in Your Handwriting}},
+    booktitle    = {Transactions on Graphics},
+    year         = {2016},
+  }
