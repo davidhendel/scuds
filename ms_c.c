@@ -90,7 +90,7 @@ static PyObject * MeanShift_kernels_py(MeanShift * self, PyObject * args)
   int i = 0;
   while (ListKernel[i]!=NULL)
   {
-   PyObject * name = PyString_FromString(ListKernel[i]->name);
+   PyObject * name = PyUnicode_FromString(ListKernel[i]->name);
    PyList_Append(ret, name);
    Py_DECREF(name);
    
@@ -243,7 +243,7 @@ static PyObject * MeanShift_spatials_py(MeanShift * self, PyObject * args)
   int i = 0;
   while (ListSpatial[i]!=NULL)
   {
-   PyObject * name = PyString_FromString(ListSpatial[i]->name);
+   PyObject * name = PyUnicode_FromString(ListSpatial[i]->name);
    PyList_Append(ret, name);
    Py_DECREF(name);
    
@@ -304,7 +304,7 @@ static PyObject * MeanShift_balls_py(MeanShift * self, PyObject * args)
   int i = 0;
   while (ListBalls[i]!=NULL)
   {
-   PyObject * name = PyString_FromString(ListBalls[i]->name);
+   PyObject * name = PyUnicode_FromString(ListBalls[i]->name);
    PyList_Append(ret, name);
    Py_DECREF(name);
    
@@ -370,7 +370,7 @@ static PyObject * MeanShift_info_py(MeanShift * self, PyObject * args)
   {
    if (strcmp(ListKernel[i]->name, name)==0)
    {
-    return PyString_FromString(ListKernel[i]->description);
+    return PyUnicode_FromString(ListKernel[i]->description);
    }
    
    ++i; 
@@ -381,7 +381,7 @@ static PyObject * MeanShift_info_py(MeanShift * self, PyObject * args)
   {
    if (strcmp(ListSpatial[i]->name, name)==0)
    {
-    return PyString_FromString(ListSpatial[i]->description);
+    return PyUnicode_FromString(ListSpatial[i]->description);
    }
    
    ++i; 
@@ -392,7 +392,7 @@ static PyObject * MeanShift_info_py(MeanShift * self, PyObject * args)
   {
    if (strcmp(ListBalls[i]->name, name)==0)
    {
-    return PyString_FromString(ListBalls[i]->description);
+    return PyUnicode_FromString(ListBalls[i]->description);
    }
    
    ++i; 
@@ -419,7 +419,7 @@ static PyObject * MeanShift_info_config_py(MeanShift * self, PyObject * args)
    {
     if (ListKernel[i]->configuration!=NULL)
     {
-     return PyString_FromString(ListKernel[i]->configuration);
+     return PyUnicode_FromString(ListKernel[i]->configuration);
     }
     else
     {
@@ -531,7 +531,7 @@ static PyObject * MeanShift_converters_py(MeanShift * self, PyObject * args)
   int i = 0;
   while (ListConvert[i]!=NULL)
   {
-   PyObject * name = PyString_FromStringAndSize(&ListConvert[i]->code, 1);
+   PyObject * name = PyUnicode_FromStringAndSize(&ListConvert[i]->code, 1);
    PyList_Append(ret, name);
    Py_DECREF(name);
    
@@ -623,13 +623,13 @@ static PyObject * MeanShift_set_data_py(MeanShift * self, PyObject * args)
   int weight_i = -1;
   if ((weight_index!=NULL)&&(weight_index!=Py_None))
   {
-   if (PyInt_Check(weight_index)==0)
+   if (PyLong_Check(weight_index)==0)
    {
     PyErr_SetString(PyExc_RuntimeError, "weight index must be an integer");
     return NULL;  
    }
     
-   weight_i = PyInt_AsLong(weight_index);
+   weight_i = PyLong_AsLong(weight_index);
    
    if ((weight_i>=0)&&(weight_i<features))
    {
@@ -730,8 +730,8 @@ static PyObject * MeanShift_get_dm_py(MeanShift * self, PyObject * args)
 
 static PyObject * MeanShift_get_dim_py(MeanShift * self, PyObject * args)
 {
- PyObject * ret = PyString_FromStringAndSize(NULL, PyArray_NDIM(self->dm.array));
- char * out = PyString_AsString(ret);
+ PyObject * ret = PyUnicode_FromStringAndSize(NULL, PyArray_NDIM(self->dm.array));
+ char * out = PyUnicode_AsUTF8(ret);
  
  int i;
  for (i=0;i<PyArray_NDIM(self->dm.array);i++)
@@ -2458,7 +2458,7 @@ static PyObject * MeanShift_sizeof_py(MeanShift * self, PyObject * args)
  int dims = DataMatrix_features(&self->dm);
  int ref_count;
  size_t shared_mem = self->kernel->byte_size(dims, self->config, &ref_count);
- if (self->name!=NULL) shared_mem += PyString_Size(self->name); // Wrong, but can't figure out the right way!
+ if (self->name!=NULL) shared_mem += PyBytes_Size(self->name); // Wrong, but can't figure out the right way!
  mem += (size_t)ceil(shared_mem / (float)ref_count);
  
  mem += DataMatrix_byte_size(&self->dm);
@@ -2484,7 +2484,7 @@ static PyObject * MeanShift_memory_py(MeanShift * self, PyObject * args)
  
  int ref_count;
  size_t kernel_mem = self->kernel->byte_size(dims, self->config, &ref_count);
- if (self->name!=NULL) kernel_mem += PyString_Size(self->name); // Wrong, but can't figure out the right way!
+ if (self->name!=NULL) kernel_mem += PyBytes_Size(self->name); // Wrong, but can't figure out the right way!
  
  size_t dm_mem = DataMatrix_byte_size(&self->dm);
  
@@ -2658,50 +2658,62 @@ static PyMethodDef MeanShift_methods[] =
 
 
 
-static PyTypeObject MeanShiftType =
-{
- PyObject_HEAD_INIT(NULL)
- 0,                                /*ob_size*/
- "ms_c.MeanShift",                 /*tp_name*/
- sizeof(MeanShift),                /*tp_basicsize*/
- 0,                                /*tp_itemsize*/
- (destructor)MeanShift_dealloc_py, /*tp_dealloc*/
- 0,                                /*tp_print*/
- 0,                                /*tp_getattr*/
- 0,                                /*tp_setattr*/
- 0,                                /*tp_compare*/
- 0,                                /*tp_repr*/
- 0,                                /*tp_as_number*/
- &MeanShift_as_sequence,           /*tp_as_sequence*/
- 0,                                /*tp_as_mapping*/
- 0,                                /*tp_hash */
- 0,                                /*tp_call*/
- 0,                                /*tp_str*/
- 0,                                /*tp_getattro*/
- 0,                                /*tp_setattro*/
- 0,                                /*tp_as_buffer*/
- Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
- "An object implimenting mean shift; also includes kernel density estimation and subspace constrained mean shift using the same object, such that they are all using the same underlying density estimate. Has multiplication capabilities, such that you can multiply density estimates to get a further density estimate. Includes multiple spatial indexing schemes and kernel types, including ones for directional data. Clustering is supported, with a choice of cluster intersection tests, as well as the ability to interpret exemplar indexing dimensions of the data matrix as extra features, so it can handle the traditional image segmentation scenario. Note that it pretends to be a readonly list, from which you can get copies of each feature vector (len(self) will return self.exemplars()). Note that you must set the kernel after setting the data in some cases, so that the kernel knows the correct number of dimensions it needs to support.", /* tp_doc */
- 0,                                /* tp_traverse */
- 0,                                /* tp_clear */
- 0,                                /* tp_richcompare */
- 0,                                /* tp_weaklistoffset */
- 0,                                /* tp_iter */
- 0,                                /* tp_iternext */
- MeanShift_methods,                /* tp_methods */
- MeanShift_members,                /* tp_members */
- 0,                                /* tp_getset */
- 0,                                /* tp_base */
- 0,                                /* tp_dict */
- 0,                                /* tp_descr_get */
- 0,                                /* tp_descr_set */
- 0,                                /* tp_dictoffset */
- 0,                                /* tp_init */
- 0,                                /* tp_alloc */
- MeanShift_new_py,                 /* tp_new */
+//static PyTypeObject MeanShiftType =
+//{
+// PyObject_HEAD_INIT(NULL)
+// 0,                                /*ob_size*/
+// "ms_c.MeanShift",                 /*tp_name*/
+// sizeof(MeanShift),                /*tp_basicsize*/
+// 0,                                /*tp_itemsize*/
+// (destructor)MeanShift_dealloc_py, /*tp_dealloc*/
+// 0,                                /*tp_print*/
+// 0,                                /*tp_getattr*/
+// 0,                                /*tp_setattr*/
+// 0,                                /*tp_compare*/
+// 0,                                /*tp_repr*/
+// 0,                                /*tp_as_number*/
+// &MeanShift_as_sequence,           /*tp_as_sequence*/
+// 0,                                /*tp_as_mapping*/
+// 0,                                /*tp_hash */
+// 0,                                /*tp_call*/
+// 0,                                /*tp_str*/
+// 0,                                /*tp_getattro*/
+// 0,                                /*tp_setattro*/
+// 0,                                /*tp_as_buffer*/
+// Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+// "An object implimenting mean shift; also includes kernel density estimation and subspace constrained mean shift using the same object, such that they are all using the same underlying density estimate. Has multiplication capabilities, such that you can multiply density estimates to get a further density estimate. Includes multiple spatial indexing schemes and kernel types, including ones for directional data. Clustering is supported, with a choice of cluster intersection tests, as well as the ability to interpret exemplar indexing dimensions of the data matrix as extra features, so it can handle the traditional image segmentation scenario. Note that it pretends to be a readonly list, from which you can get copies of each feature vector (len(self) will return self.exemplars()). Note that you must set the kernel after setting the data in some cases, so that the kernel knows the correct number of dimensions it needs to support.", /* tp_doc */
+// 0,                                /* tp_traverse */
+// 0,                                /* tp_clear */
+// 0,                                /* tp_richcompare */
+// 0,                                /* tp_weaklistoffset */
+// 0,                                /* tp_iter */
+// 0,                                /* tp_iternext */
+// MeanShift_methods,                /* tp_methods */
+// MeanShift_members,                /* tp_members */
+// 0,                                /* tp_getset */
+// 0,                                /* tp_base */
+// 0,                                /* tp_dict */
+// 0,                                /* tp_descr_get */
+// 0,                                /* tp_descr_set */
+// 0,                                /* tp_dictoffset */
+// 0,                                /* tp_init */
+// 0,                                /* tp_alloc */
+// MeanShift_new_py,                 /* tp_new */
+//};
+
+static PyTypeObject MeanShiftType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "ms_c.MeanShift",
+    .tp_doc = "An object implimenting mean shift; also includes kernel density estimation and subspace constrained mean shift using the same object, such that they are all using the same underlying density estimate. Has multiplication capabilities, such that you can multiply density estimates to get a further density estimate. Includes multiple spatial indexing schemes and kernel types, including ones for directional data. Clustering is supported, with a choice of cluster intersection tests, as well as the ability to interpret exemplar indexing dimensions of the data matrix as extra features, so it can handle the traditional image segmentation scenario. Note that it pretends to be a readonly list, from which you can get copies of each feature vector (len(self) will return self.exemplars()). Note that you must set the kernel after setting the data in some cases, so that the kernel knows the correct number of dimensions it needs to support.",
+    .tp_basicsize = sizeof(MeanShift),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    .tp_new = MeanShift_new_py,
+    .tp_dealloc = (destructor)MeanShift_dealloc_py,
+    .tp_as_sequence = &MeanShift_as_sequence,
+    .tp_methods = MeanShift_methods,
+    .tp_members = MeanShift_members
 };
-
-
 
 static PyMethodDef ms_c_methods[] =
 {
@@ -2718,18 +2730,32 @@ static PyMethodDef ms_c_methods[] =
 #define PyMODINIT_FUNC void
 #endif
 
-PyMODINIT_FUNC initms_c(void)
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "ms_c",     /* m_name */
+    "Primarily provides a mean shift implementation, but also includes kernel density estimation and subspace constrained mean shift using the same object, such that they are all using the same underlying density estimate. Includes multiple spatial indexing schemes and kernel types, including support for directional data. Clustering is supported, with a choice of cluster intersection tests, as well as the ability to interpret exemplar indexing dimensions of the data matrix as extra features, so it can handle the traditional image segmentation scenario efficiently. Exemplars can also be weighted. There is extensive support for particle filters as well, including multiplication of distributions for non-parametric belief propagation. Note that this module is not multithread safe - use multiprocessing instead.",  /* m_doc */
+    -1,                  /* m_size */
+    ms_c_methods,    /* m_methods */
+    NULL,                /* m_reload */
+    NULL,                /* m_traverse */
+    NULL,                /* m_clear */
+    NULL,                /* m_free */
+};
+
+PyMODINIT_FUNC PyInit_ms_c(void)
 {
- PyObject * mod = Py_InitModule3("ms_c", ms_c_methods, "Primarily provides a mean shift implementation, but also includes kernel density estimation and subspace constrained mean shift using the same object, such that they are all using the same underlying density estimate. Includes multiple spatial indexing schemes and kernel types, including support for directional data. Clustering is supported, with a choice of cluster intersection tests, as well as the ability to interpret exemplar indexing dimensions of the data matrix as extra features, so it can handle the traditional image segmentation scenario efficiently. Exemplars can also be weighted. There is extensive support for particle filters as well, including multiplication of distributions for non-parametric belief propagation. Note that this module is not multithread safe - use multiprocessing instead.");
+ PyObject * mod = PyModule_Create(&moduledef);
  
  import_array();
  
- if (PyType_Ready(&MeanShiftType) < 0) return;
+ if (PyType_Ready(&MeanShiftType) < 0) return NULL;
  
  Py_INCREF(&MeanShiftType);
  PyModule_AddObject(mod, "MeanShift", (PyObject*)&MeanShiftType);
  
  // Fun little hack - there is some memory in a global pointer, so we add a capsule object to the module for no other purpose than to make sure it gets free-ed via the capsule destructor when the module is put down...
-  PyObject * bessel_death = PyCapsule_New("Ignore me", NULL, FreeBesselMemory);
-  PyModule_AddObject(mod, "__bessel_death", bessel_death);
-}
+//  PyObject * bessel_death = PyCapsule_New("Ignore me", NULL, FreeBesselMemory);
+//  PyModule_AddObject(mod, "__bessel_death", bessel_death);
+    
+  return mod;
+};
