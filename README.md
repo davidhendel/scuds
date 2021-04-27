@@ -1,4 +1,6 @@
-Identify and characterize halo substructure (or other linear features) using Subspace--Constrained Mean Shift. See https://ui.adsabs.harvard.edu/#abs/2018arXiv181110613H/abstract for a complete description and examples.
+# SCUDS: A machine-vision method for automatic classification of stellar halo substructure
+
+Identify and characterize halo substructure (or other linear features) using Subspace--Constrained Mean Shift. See [Hendel et al. 2019](https://ui.adsabs.harvard.edu/#abs/2018arXiv181110613H/abstract) for a complete description of the method and an example of its use.
 
 Requires Python 2.x
 
@@ -10,7 +12,7 @@ To use this package you will need to replace the ms_c.c file in the helit/ms dir
 
 If you use this package please also cite helit and the work it was developed for, 
 
-'''
+```
   @MISC{helit,
     author = {T. S. F. Haines},
     title = {\url{https://github.com/thaines/helit}},
@@ -23,4 +25,4 @@ If you use this package please also cite helit and the work it was developed for
     booktitle    = {Transactions on Graphics},
     year         = {2016},
   }
-'''
+```
