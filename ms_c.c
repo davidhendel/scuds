@@ -2754,8 +2754,8 @@ PyMODINIT_FUNC PyInit_ms_c(void)
  PyModule_AddObject(mod, "MeanShift", (PyObject*)&MeanShiftType);
  
  // Fun little hack - there is some memory in a global pointer, so we add a capsule object to the module for no other purpose than to make sure it gets free-ed via the capsule destructor when the module is put down...
-//  PyObject * bessel_death = PyCapsule_New("Ignore me", NULL, FreeBesselMemory);
-//  PyModule_AddObject(mod, "__bessel_death", bessel_death);
+  PyObject * bessel_death = PyCapsule_New("Ignore me", NULL, FreeBesselMemory);
+  PyModule_AddObject(mod, "__bessel_death", bessel_death);
     
   return mod;
 };
