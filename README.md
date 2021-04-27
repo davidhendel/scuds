@@ -10,6 +10,7 @@ To use this package you will need to replace the ms_c.c file in the helit/ms dir
 
 If you use this package please also cite helit and the work it was developed for, 
 
+'''
   @MISC{helit,
     author = {T. S. F. Haines},
     title = {\url{https://github.com/thaines/helit}},
@@ -22,3 +23,4 @@ If you use this package please also cite helit and the work it was developed for
     booktitle    = {Transactions on Graphics},
     year         = {2016},
   }
+'''
